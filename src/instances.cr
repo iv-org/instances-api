@@ -81,6 +81,13 @@ spawn do
   end
 end
 
+before_all do |env|
+  env.response.headers["X-XSS-Protection"] = "1; mode=block"
+  env.response.headers["X-Content-Type-Options"] = "nosniff"
+  env.response.headers["Referrer-Policy"] = "same-origin"
+  env.response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+end
+
 get "/" do |env|
   sort_by = env.params.query["sort_by"]?
   sort_by ||= "users-reverse"
