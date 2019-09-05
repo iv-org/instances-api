@@ -35,15 +35,18 @@ spawn do
     loop do
       begin
         response = JSON.parse(HTTP::Client.get(URI.parse("https://uptime.invidio.us/api/getMonitorList/89VnzSKAn?page=#{page}")).body)
+
+        monitors += response["psp"]["monitors"].as_a
+        page += 1
+
+        if response["psp"]["perPage"].as_i * page > response["psp"]["totalMonitors"].as_i
+          break
+        end
       rescue ex
+        error_message = response.try &.["errorStats"]?
+        error_message ||= ex.message
+        puts "Exception pulling monitors: #{error_message}"
         next
-      end
-
-      monitors += response["psp"]["monitors"].as_a
-      page += 1
-
-      if response["psp"]["perPage"].as_i * page > response["psp"]["totalMonitors"].as_i
-        break
       end
     end
 
