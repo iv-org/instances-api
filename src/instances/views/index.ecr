@@ -51,7 +51,7 @@
   <body>
     <div class="header">
       <p>
-        <span>Instances sourced from <a href="https://github.com/omarroth/invidious/wiki/Invidious-Instances">here</a>.</span>
+        <span>Add your instance <a href="https://github.com/omarroth/invidious/wiki/Invidious-Instances">here</a>.</span>
         <span class="right"><a href="/instances.json?pretty=1">JSON</a></span>
       </p>
     </div>
@@ -74,7 +74,7 @@
           <% instances.each_with_index do |tuple, index| %>
             <% name, instance = tuple %>
             <tr<% if index % 2 == 1 %> class="pure-table-odd" <% end %>>
-              <td><a href="<%= instance[:uri] %>"><%= name %></a></td>
+              <td><a href="<%= instance[:uri] %>"><%= name.size > 24 ? "#{name[0, 12]}...#{name[-9, 9]}" : name %></a></td>
               <td><%= instance[:stats]?.try &.["software"]?.try &.["version"] || "-" %></td>
               <td><%= instance[:type] %></td>
               <td><%= instance[:stats]?.try &.["usage"]?.try &.["users"]["total"] || "-" %></td>
