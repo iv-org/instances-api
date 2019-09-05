@@ -90,7 +90,7 @@ end
 
 get "/" do |env|
   sort_by = env.params.query["sort_by"]?
-  sort_by ||= "users-reverse"
+  sort_by ||= "users"
 
   sort_proc = ->(instance : Tuple(String, Instance)) { instance[0] }
   instances = INSTANCES.dup.to_a
