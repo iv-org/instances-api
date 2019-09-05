@@ -1,0 +1,11 @@
+/doc/
+/dev/
+/docs/
+/lib/
+/bin/
+/.shards/
+/.vscode/
+/instances
+/sentry
+shard.lock
+*.dwarf
