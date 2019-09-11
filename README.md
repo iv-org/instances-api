@@ -1,6 +1,6 @@
 # [instances.invidio.us](https://instances.invidio.us)
 
-Status page for list of [Invidious](https://github.com/omarroth/invidious) instances, sourced from [here](https://github.com/omarroth/invidious/wiki/Invidious-Instances).
+Status page for [Invidious](https://github.com/omarroth/invidious) instances, sourced from [here](https://github.com/omarroth/invidious/wiki/Invidious-Instances).
 
 ## Installation
 
