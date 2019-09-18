@@ -95,8 +95,37 @@ get "/" do |env|
   sort_by = env.params.query["sort_by"]?
   sort_by ||= "users"
 
+  instances = sort_instances(INSTANCES, sort_by)
+
+  rendered "index"
+end
+
+get "/instances.json" do |env|
+  env.response.content_type = "application/json; charset=utf-8"
+  sort_by = env.params.query["sort_by"]?
+  sort_by ||= "users"
+
+  instances = sort_instances(INSTANCES, sort_by)
+
+  if env.params.query["pretty"]?.try &.== "1"
+    instances.to_pretty_json
+  else
+    instances.to_json
+  end
+end
+
+error 404 do |env|
+  env.redirect "/"
+  halt env, status_code: 302, response: ""
+end
+
+static_headers do |response, filepath, filestat|
+  response.headers.add("Cache-Control", "max-age=86400")
+end
+
+def sort_instances(instances, sort_by)
   sort_proc = ->(instance : Tuple(String, Instance)) { instance[0] }
-  instances = INSTANCES.dup.to_a
+  instances = instances.to_a
 
   case sort_by
   when .starts_with? "name"
@@ -116,26 +145,7 @@ get "/" do |env|
   end
 
   instances.reverse! if sort_by.ends_with?("-reverse")
-  rendered "index"
-end
-
-get "/instances.json" do |env|
-  env.response.content_type = "application/json; charset=utf-8"
-
-  if env.params.query["pretty"]?.try &.== "1"
-    INSTANCES.to_pretty_json
-  else
-    INSTANCES.to_json
-  end
-end
-
-error 404 do |env|
-  env.redirect "/"
-  halt env, status_code: 302, response: ""
-end
-
-static_headers do |response, filepath, filestat|
-  response.headers.add("Cache-Control", "max-age=86400")
+  instances
 end
 
 gzip true

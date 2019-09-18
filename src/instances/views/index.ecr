@@ -52,7 +52,7 @@
     <div class="header">
       <p>
         <span>Add your instance <a href="https://github.com/omarroth/invidious/wiki/Invidious-Instances">here</a>.</span>
-        <span class="right"><a href="/instances.json?pretty=1">JSON</a></span>
+        <span class="right"><a href="/instances.json?pretty=1<% if sort_by != "users" %>&sort_by=<%= sort_by %><% end %>">JSON</a></span>
       </p>
     </div>
 
