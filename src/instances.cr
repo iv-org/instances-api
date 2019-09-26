@@ -103,7 +103,9 @@ get "/" do |env|
 end
 
 get "/instances.json" do |env|
+  env.response.headers["Access-Control-Allow-Origin"] = "*"
   env.response.content_type = "application/json; charset=utf-8"
+
   sort_by = env.params.query["sort_by"]?
   sort_by ||= "users"
 
