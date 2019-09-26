@@ -34,7 +34,10 @@ spawn do
     page = 1
     loop do
       begin
-        response = JSON.parse(HTTP::Client.get(URI.parse("https://uptime.invidio.us/api/getMonitorList/89VnzSKAn?page=#{page}")).body)
+        client = HTTP::Client.new(URI.parse("https://uptime.invidio.us"))
+        client.connect_timeout = 10.seconds
+        client.read_timeout = 10.seconds
+        response = JSON.parse(client.get("/api/getMonitorList/89VnzSKAn?page=#{page}").body)
 
         monitors += response["psp"]["monitors"].as_a
         page += 1
@@ -46,7 +49,6 @@ spawn do
         error_message = response.try &.["errorStats"]?
         error_message ||= ex.message
         puts "Exception pulling monitors: #{error_message}"
-        next
       end
     end
 
@@ -75,11 +77,11 @@ spawn do
         end
       end
 
-      monitor = monitors.select { |monitor| monitor["name"].try &.as_s == host }[0]?
+      monitor = monitors.try &.select { |monitor| monitor["name"].try &.as_s == host }[0]?
       INSTANCES[host] = {flag: flag, region: region, stats: stats, type: type, uri: uri.to_s, monitor: monitor}
     end
 
-    sleep 1.minute
+    sleep 5.minutes
     Fiber.yield
   end
 end
