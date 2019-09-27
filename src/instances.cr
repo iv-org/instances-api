@@ -49,6 +49,7 @@ spawn do
         error_message = response.try &.["errorStats"]?
         error_message ||= ex.message
         puts "Exception pulling monitors: #{error_message}"
+        break
       end
     end
 
@@ -78,7 +79,7 @@ spawn do
       end
 
       monitor = monitors.try &.select { |monitor| monitor["name"].try &.as_s == host }[0]?
-      INSTANCES[host] = {flag: flag, region: region, stats: stats, type: type, uri: uri.to_s, monitor: monitor}
+      INSTANCES[host] = {flag: flag, region: region, stats: stats, type: type, uri: uri.to_s, monitor: monitor || INSTANCES[host]?.try &.[:monitor]?}
     end
 
     sleep 5.minutes
