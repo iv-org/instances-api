@@ -46,7 +46,7 @@ spawn do
           break
         end
       rescue ex
-        error_message = response.try &.["errorStats"]?
+        error_message = response.try &.as?(String).try &.["errorStats"]?
         error_message ||= ex.message
         puts "Exception pulling monitors: #{error_message}"
         break
