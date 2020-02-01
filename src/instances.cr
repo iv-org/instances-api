@@ -56,6 +56,7 @@ spawn do
     body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/wiki/omarroth/invidious/Invidious-Instances.md")).body
     headers = HTTP::Headers.new
 
+    body = body.split("### Blocked:")[0]
     body.scan(/\[(?<host>[^ \]]+)\]\((?<uri>[^\)]+)\)( .(?<region>[\x{1f100}-\x{1f1ff}]{2}))?/mx).each do |md|
       region = md["region"]?.try { |region| region.codepoints.map { |codepoint| (codepoint - 0x1f1a5).chr }.join("") }
       flag = md["region"]?
