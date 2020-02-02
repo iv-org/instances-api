@@ -97,7 +97,7 @@ end
 
 get "/" do |env|
   sort_by = env.params.query["sort_by"]?
-  sort_by ||= "users"
+  sort_by ||= "type,users"
 
   instances = sort_instances(INSTANCES, sort_by)
 
@@ -109,7 +109,7 @@ get "/instances.json" do |env|
   env.response.content_type = "application/json; charset=utf-8"
 
   sort_by = env.params.query["sort_by"]?
-  sort_by ||= "users"
+  sort_by ||= "type,users"
 
   instances = sort_instances(INSTANCES, sort_by)
 
@@ -129,27 +129,21 @@ static_headers do |response, filepath, filestat|
   response.headers.add("Cache-Control", "max-age=86400")
 end
 
+SORT_PROCS = {
+  "health"   => ->(name : String, instance : Instance) { -(instance[:monitor]?.try &.["weeklyRatio"]["ratio"].as_s.to_f || 0.0) },
+  "location" => ->(name : String, instance : Instance) { instance[:region]? || "ZZ" },
+  "name"     => ->(name : String, instance : Instance) { name },
+  "signup"   => ->(name : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
+  "type"     => ->(name : String, instance : Instance) { instance[:type] },
+  "users"    => ->(name : String, instance : Instance) { -(instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0.0) },
+  "version"  => ->(name : String, instance : Instance) { instance[:stats]?.try &.["software"]?.try &.["version"].as_s.try &.split("-", 2)[0].split(".").map { |a| -a.to_i } || [0, 0, 0] },
+}
+
 def sort_instances(instances, sort_by)
-  sort_proc = ->(instance : Tuple(String, Instance)) { instance[0] }
   instances = instances.to_a
+  sorts = sort_by.downcase.split("-", 2)[0].split(",").map { |s| SORT_PROCS[s] }
 
-  case sort_by
-  when .starts_with? "name"
-    instances.sort_by! { |name, instance| name }
-  when .starts_with? "version"
-    instances = instances.sort_by { |name, instance| "#{instance[:stats]?.try &.["software"]?.try &.["version"].as_s.split("-")[0] || "0.0.0"}#{name}" }.reverse
-  when .starts_with? "type"
-    instances.sort_by! { |name, instance| instance[:type] }
-  when .starts_with? "signup"
-    instances.sort_by! { |name, instance| instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 }
-  when .starts_with? "location"
-    instances.sort_by! { |name, instance| instance[:region]? || "ZZ" }
-  when .starts_with? "health"
-    instances = instances.sort_by { |name, instance| instance[:monitor]?.try &.["weeklyRatio"]["ratio"].as_s.to_f || 0.0 }.reverse
-  when .starts_with? "users"
-    instances = instances.sort_by { |name, instance| instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0 }.reverse
-  end
-
+  instances.sort_by! { |name, instance| sorts.map &.call(name, instance).to_s }
   instances.reverse! if sort_by.ends_with?("-reverse")
   instances
 end
