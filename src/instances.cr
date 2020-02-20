@@ -135,7 +135,7 @@ SORT_PROCS = {
   "name"     => ->(name : String, instance : Instance) { name },
   "signup"   => ->(name : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
   "type"     => ->(name : String, instance : Instance) { instance[:type] },
-  "users"    => ->(name : String, instance : Instance) { -(instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0.0) },
+  "users"    => ->(name : String, instance : Instance) { -(instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0) },
   "version"  => ->(name : String, instance : Instance) { instance[:stats]?.try &.["software"]?.try &.["version"].as_s.try &.split("-", 2)[0].split(".").map { |a| -a.to_i } || [0, 0, 0] },
 }
 
@@ -143,7 +143,24 @@ def sort_instances(instances, sort_by)
   instances = instances.to_a
   sorts = sort_by.downcase.split("-", 2)[0].split(",").map { |s| SORT_PROCS[s] }
 
-  instances.sort_by! { |name, instance| sorts.map &.call(name, instance).to_s }
+  instances.sort! do |a, b|
+    compare = 0
+    sorts.each do |sort|
+      first = sort.call(a[0], a[1])
+      case first
+      when Int32
+        compare = first <=> sort.call(b[0], b[1]).as(Int32)
+      when Array(Int32)
+        compare = first <=> sort.call(b[0], b[1]).as(Array(Int32))
+      when Float64
+        compare = first <=> sort.call(b[0], b[1]).as(Float64)
+      when String
+        compare = first <=> sort.call(b[0], b[1]).as(String)
+      end
+      break if compare != 0
+    end
+    compare
+  end
   instances.reverse! if sort_by.ends_with?("-reverse")
   instances
 end
