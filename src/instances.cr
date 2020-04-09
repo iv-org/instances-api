@@ -156,6 +156,8 @@ def sort_instances(instances, sort_by)
         compare = first <=> sort.call(b[0], b[1]).as(Float64)
       when String
         compare = first <=> sort.call(b[0], b[1]).as(String)
+      else
+        raise "Invalid proc"
       end
       break if compare != 0
     end
