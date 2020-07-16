@@ -42,19 +42,19 @@ spawn do
         monitors += response["psp"]["monitors"].as_a
         page += 1
 
-        if response["psp"]["perPage"].as_i * page > response["psp"]["totalMonitors"].as_i
-          break
-        end
+        break if response["psp"]["perPage"].as_i * page > response["psp"]["totalMonitors"].as_i
       rescue ex
         error_message = response.try &.as?(String).try &.["errorStats"]?
         error_message ||= ex.message
-        puts "Exception pulling monitors: #{error_message}"
+        puts "Error pulling monitors: #{error_message}"
         break
       end
     end
 
     body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/wiki/omarroth/invidious/Invidious-Instances.md")).body
     headers = HTTP::Headers.new
+
+    instances = {} of String => Instance
 
     body = body.split("### Blocked:")[0]
     body.scan(/\[(?<host>[^ \]]+)\]\((?<uri>[^\)]+)\)( .(?<region>[\x{1f100}-\x{1f1ff}]{2}))?/mx).each do |md|
@@ -80,8 +80,11 @@ spawn do
       end
 
       monitor = monitors.try &.select { |monitor| monitor["name"].try &.as_s == host }[0]?
-      INSTANCES[host] = {flag: flag, region: region, stats: stats, type: type, uri: uri.to_s, monitor: monitor || INSTANCES[host]?.try &.[:monitor]?}
+      instances[host] = {flag: flag, region: region, stats: stats, type: type, uri: uri.to_s, monitor: monitor || instances[host]?.try &.[:monitor]?}
     end
+
+    INSTANCES.clear
+    INSTANCES.merge! instances
 
     sleep 5.minutes
     Fiber.yield
