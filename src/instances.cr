@@ -24,7 +24,7 @@ macro rendered(filename)
   render "src/instances/views/#{{{filename}}}.ecr"
 end
 
-alias Instance = NamedTuple(flag: String?, region: String?, stats: JSON::Any?, type: String, uri: String, monitor: JSON::Any?)
+alias Instance = {flag: String?, region: String?, stats: JSON::Any?, type: String, uri: String, monitor: JSON::Any?}
 
 INSTANCES = {} of String => Instance
 
@@ -114,7 +114,10 @@ get "/instances.json" do |env|
   sort_by = env.params.query["sort_by"]?
   sort_by ||= "type,users"
 
-  instances = sort_instances(INSTANCES, sort_by)
+  instances = sort_instances(INSTANCES, sort_by).map do |instance|
+    name, value = instance
+    Hash{name => value}
+  end
 
   if env.params.query["pretty"]?.try &.== "1"
     instances.to_pretty_json
