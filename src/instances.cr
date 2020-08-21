@@ -51,7 +51,7 @@ spawn do
       end
     end
 
-    body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/wiki/omarroth/invidious/Invidious-Instances.md")).body
+    body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/wiki/iv-org/invidious/Invidious-Instances.md")).body
     headers = HTTP::Headers.new
 
     instances = {} of String => Instance
