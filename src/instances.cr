@@ -133,7 +133,7 @@ static_headers do |response, filepath, filestat|
 end
 
 SORT_PROCS = {
-  "health"   => ->(name : String, instance : Instance) { -(instance[:monitor]?.try &.["weeklyRatio"]["ratio"].as_s.to_f || 0.0) },
+  "health"   => ->(name : String, instance : Instance) { -(instance[:monitor]?.try &.["30dRatio"]["ratio"].as_s.to_f || 0.0) },
   "location" => ->(name : String, instance : Instance) { instance[:region]? || "ZZ" },
   "name"     => ->(name : String, instance : Instance) { name },
   "signup"   => ->(name : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
