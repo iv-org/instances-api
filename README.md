@@ -1,11 +1,11 @@
 # [instances.invidio.us](https://instances.invidio.us)
 
-Status page for [Invidious](https://github.com/omarroth/invidious) instances, sourced from [here](https://github.com/omarroth/invidious/wiki/Invidious-Instances).
+Status page for [Invidious](https://github.com/iv-org/invidious) instances, sourced from [here](https://github.com/iv-org/documentation/blob/master/Invidious-Instances.md).
 
 ## Installation
 
 ```bash
-$ git clone https://github.com/omarroth/instances.invidio.us
+$ git clone https://github.com/iv-org/instances.invidio.us
 $ cd instances.invidio.us
 $ shards install
 $ crystal build src/instances.cr --release
@@ -25,7 +25,7 @@ $ ./instances -h
 
 ## Contributing
 
-1. Fork it (<https://github.com/omarroth/instances.invidio.us/fork>)
+1. Fork it (<https://github.com/iv-org/instances.invidio.us/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -33,4 +33,4 @@ $ ./instances -h
 
 ## Contributors
 
-- [Omar Roth](https://github.com/omarroth) - creator and maintainer
+- [Omar Roth](https://github.com/omarroth) - original creator
