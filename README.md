@@ -1,6 +1,8 @@
 # [instances.invidio.us](https://instances.invidio.us)
 
-Status page for [Invidious](https://github.com/iv-org/invidious) instances, sourced from [here](https://github.com/iv-org/documentation/blob/master/Invidious-Instances.md).
+[![Build Status](https://github.com/iv-org/instances.invidio.us/workflows/instances.invidio.us%20CI/badge.svg)](https://github.com/iv-org/instances.invidio.us/actions)
+
+Status page for [Invidious](https://github.com/iv-org/invidious) instances, sourced from [the documentation](https://github.com/iv-org/documentation/blob/master/Invidious-Instances.md).
 
 ## Installation
 
