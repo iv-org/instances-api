@@ -1,0 +1,55 @@
+name: instances.invidio.us CI
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+    branches: "*"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Crystal
+        uses: oprypin/install-crystal@v1.3.0
+
+      - name: Cache Shards
+        uses: actions/cache@v2
+        with:
+          path: ./lib
+          key: shards-${{ hashFiles('shard.lock') }}
+
+      - name: Install Shards
+        run: |
+          if ! shards check; then
+            shards install
+          fi
+
+      - name: Run lint
+        run: |
+          if ! crystal tool format --check; then
+            crystal tool format
+            git diff
+            exit 1
+          fi
+
+      - name: Build
+        run: crystal build --warnings all --error-on-warnings --error-trace src/instances.cr
+
+  build-docker:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker
+        run: docker-compose up -d
+
+      - name: Test Docker
+        run: curl -Isf http://localhost:3000
