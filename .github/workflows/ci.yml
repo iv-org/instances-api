@@ -52,4 +52,4 @@ jobs:
         run: docker-compose up -d
 
       - name: Test Docker
-        run: while curl -Isf http://localhost:3000; do sleep 1; done
+        run: curl -Isf http://localhost:3000
