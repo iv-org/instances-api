@@ -7,5 +7,4 @@
 /.vscode/
 /instances
 /sentry
-shard.lock
 *.dwarf
