@@ -42,7 +42,7 @@ spawn do
         monitors += response["psp"]["monitors"].as_a
         page += 1
 
-        break if response["psp"]["perPage"].as_i * page > response["psp"]["totalMonitors"].as_i
+        break if response["psp"]["perPage"].as_i * (page - 1) + 1 > response["psp"]["totalMonitors"].as_i
       rescue ex
         error_message = response.try &.as?(String).try &.["errorStats"]?
         error_message ||= ex.message
