@@ -50,9 +50,11 @@ spawn do
         break
       end
     end
-
-    body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/iv-org/documentation/master/Invidious-Instances.md")).body
-    headers = HTTP::Headers.new
+    begin
+      body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/iv-org/documentation/master/Invidious-Instances.md")).body
+    rescue ex
+      body = ""
+    end
 
     instances = {} of String => Instance
 
@@ -73,7 +75,7 @@ spawn do
         client.connect_timeout = 5.seconds
         client.read_timeout = 5.seconds
         begin
-          stats = JSON.parse(client.get("/api/v1/stats", headers).body)
+          stats = JSON.parse(client.get("/api/v1/stats").body)
         rescue ex
           stats = nil
         end
@@ -87,7 +89,6 @@ spawn do
     INSTANCES.merge! instances
 
     sleep 5.minutes
-    Fiber.yield
   end
 end
 
