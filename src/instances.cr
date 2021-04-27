@@ -34,7 +34,7 @@ spawn do
     page = 1
     loop do
       begin
-        client = HTTP::Client.new(URI.parse("https://uptime.invidious.io"))
+        client = HTTP::Client.new(URI.parse("https://stats.uptimerobot.com/89VnzSKAn"))
         client.connect_timeout = 10.seconds
         client.read_timeout = 10.seconds
         response = JSON.parse(client.get("/api/getMonitorList/89VnzSKAn?page=#{page}").body)
