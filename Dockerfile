@@ -1,4 +1,4 @@
-FROM crystallang/crystal:0.35.1-alpine AS builder
+FROM docker.io/crystallang/crystal:1.0.0-alpine AS builder
 WORKDIR /app
 COPY ./shard.yml ./shard.yml
 RUN shards install
