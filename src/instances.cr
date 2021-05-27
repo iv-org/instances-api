@@ -84,7 +84,6 @@ spawn do
             end
 
             stats = response
-
           rescue ex
             stats = nil
           end
