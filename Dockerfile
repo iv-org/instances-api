@@ -3,7 +3,7 @@ WORKDIR /app
 COPY ./shard.yml ./shard.yml
 RUN shards install
 COPY ./src/ ./src/
-RUN crystal build ./src/instances.cr -s -p -t
+RUN crystal build ./src/instances.cr --release
 
 FROM alpine:latest
 RUN apk add --no-cache gc pcre libgcc yaml
