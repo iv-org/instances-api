@@ -114,5 +114,4 @@ def get_onion_instances(body, instances)
     host = md["host"]
     instances[host] = prepare_onion_instance(md, instances)
   end
-
 end
