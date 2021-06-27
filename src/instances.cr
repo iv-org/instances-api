@@ -30,9 +30,8 @@ macro rendered(filename)
 end
 
 alias Owner = NamedTuple(name: String, url: String)
-alias Country = NamedTuple(flag: String?, region: String?, name: String?)
-alias ClearNetInstance = NamedTuple(country: Country, stats: JSON::Any?, type: String, uri: String, status_url: String?, privacy_policy: String?, ddos_protection: String?, owner: Owner, notes: String?, monitor: JSON::Any?)
-alias OnionInstance = NamedTuple(country: Country, stats: JSON::Any?, type: String, uri: String, clearnet_url: String?, privacy_policy: String?, owner: Owner, notes: String?, monitor: JSON::Any?)
+alias ClearNetInstance = NamedTuple(flag: String?, region: String?, country_name: String?, stats: JSON::Any?, type: String, uri: String, status_url: String?, privacy_policy: String?, ddos_protection: String?, owner: Owner, notes: String?, monitor: JSON::Any?)
+alias OnionInstance = NamedTuple(flag: String?, region: String?, country_name: String?, stats: JSON::Any?, type: String, uri: String, clearnet_url: String?, privacy_policy: String?, owner: Owner, notes: String?, monitor: JSON::Any?)
 
 INSTANCES = {} of String => ClearNetInstance | OnionInstance
 
@@ -119,7 +118,7 @@ end
 
 SORT_PROCS = {
   "health"   => ->(name : String, instance : ClearNetInstance | OnionInstance) { -(instance[:monitor]?.try &.["30dRatio"]["ratio"].as_s.to_f || 0.0) },
-  "location" => ->(name : String, instance : ClearNetInstance | OnionInstance) { instance[:country][:region]? || "ZZ" },
+  "location" => ->(name : String, instance : ClearNetInstance | OnionInstance) { instance[:region]? || "ZZ" },
   "name"     => ->(name : String, instance : ClearNetInstance | OnionInstance) { name },
   "signup"   => ->(name : String, instance : ClearNetInstance | OnionInstance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
   "type"     => ->(name : String, instance : ClearNetInstance | OnionInstance) { instance[:type] },

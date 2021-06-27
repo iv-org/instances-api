@@ -3,7 +3,7 @@ def fetch_country(md)
   flag = md["flag"]?
   country_name = md["country_name"]?
 
-  return {flag: flag, region: region, name: country_name}
+  return flag, region, country_name
 end
 
 def fetch_notes(md)
@@ -19,7 +19,7 @@ def prepare_http_instance(md, instances, monitors)
   uri = URI.parse(md["uri"])
   host = md["host"]
 
-  country = fetch_country(md)
+  flag, region, country_name = fetch_country(md)
 
   status_url = md["status_url"]?
 
@@ -44,7 +44,7 @@ def prepare_http_instance(md, instances, monitors)
   end
 
   monitor = monitors.try &.select { |monitor| monitor["name"].try &.as_s == host }[0]?
-  return {country: country, stats: stats, type: "https", uri: uri.to_s, status_url: status_url,
+  return {flag: flag, region: region, country_name: country_name, stats: stats, type: "https", uri: uri.to_s, status_url: status_url,
           privacy_policy: privacy_policy, ddos_protection: ddos_protection,
           owner: owner, notes: notes, monitor: monitor || instances[host]?.try &.[:monitor]?}
 end
@@ -54,7 +54,7 @@ def prepare_onion_instance(md, instances)
   host = md["host"]
 
   clearnet_url = md["clearnet_url"]
-  country = fetch_country(md)
+  flag, region, country_name = fetch_country(md)
   privacy_policy = md["privacy_policy"]?
   owner = {name: md["owner"].strip("@"), url: md["owner_url"]}
   notes = fetch_notes(md)
@@ -76,7 +76,7 @@ def prepare_onion_instance(md, instances)
     stats = nil
   end
 
-  return {country: country, stats: stats, type: "onion", uri: uri.to_s, clearnet_url: clearnet_url,
+  return {flag: flag, region: region, country_name: country_name, stats: stats, type: "onion", uri: uri.to_s, clearnet_url: clearnet_url,
           privacy_policy: privacy_policy, owner: owner, notes: notes,
           monitor: nil}
 end
