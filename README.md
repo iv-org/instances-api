@@ -1,14 +1,14 @@
 # [api.invidious.io/](https://api.invidious.io/)
 
-[![Build Status](https://github.com/iv-org/instances.invidio.us/workflows/instances.invidio.us%20CI/badge.svg)](https://github.com/iv-org/instances.invidio.us/actions)
+[![Build Status](https://github.com/iv-org/instances-api/workflows/api.invidious.io%20CI/badge.svg)](https://github.com/iv-org/instances-api/actions)
 
 Status page for [Invidious](https://github.com/iv-org/invidious) instances, sourced from [the documentation](https://github.com/iv-org/documentation/blob/master/Invidious-Instances.md).
 
 ## Installation
 
 ```bash
-$ git clone https://github.com/iv-org/instances.invidio.us
-$ cd instances.invidio.us
+$ git clone https://github.com/iv-org/instances-api
+$ cd instances-api
 $ shards install
 $ crystal build src/instances.cr --release
 ```
@@ -27,7 +27,7 @@ $ ./instances -h
 
 ## Contributing
 
-1. Fork it (<https://github.com/iv-org/instances.invidio.us/fork>)
+1. Fork it (<https://github.com/iv-org/instances-api/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
