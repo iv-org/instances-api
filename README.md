@@ -1,4 +1,4 @@
-# [instances.invidio.us](https://instances.invidio.us)
+# [api.invidious.io/](https://api.invidious.io/)
 
 [![Build Status](https://github.com/iv-org/instances.invidio.us/workflows/instances.invidio.us%20CI/badge.svg)](https://github.com/iv-org/instances.invidio.us/actions)
 
