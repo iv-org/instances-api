@@ -88,13 +88,12 @@ spawn do
               end
 
               trending = JSON.parse(req.body)
-              trending[0]["videoId"].as_s()
+              trending[0]["videoId"].as_s
               api = true
             rescue
               puts "Cant parse API json"
             end
           end
-
         rescue ex
           stats = nil
         end
