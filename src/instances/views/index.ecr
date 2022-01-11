@@ -119,7 +119,7 @@
               <td><%= instance[:stats]?.try &.["software"]?.try &.["version"] || "-" %></td>
               <td><%= instance[:type] %></td>
               <td><%= instance[:stats]?.try &.["usage"]?.try &.["users"]["total"] || "-" %></td>
-              <td><%= instance[:cors] || "-" %></td>
+              <td><%= instance[:cors] == nil ? "-" : instance[:cors] ? "✔" : "❌" %></td>
               <td><%= instance[:api] == nil ? "-" : instance[:api] ? "✔" : "❌" %></td>
               <td><%= instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? "✔" : "❌" } || "-" %></td>
               <td><%= instance[:flag]? ? "#{instance[:flag]} #{instance[:region]}" : "-" %></td>
