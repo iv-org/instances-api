@@ -83,11 +83,13 @@ spawn do
           req = client.get("/api/v1/trending")
           if req.status_code == 200
             begin
-              JSON.parse(req.body)
-              api = true
               if req.headers["Access-Control-Allow-Origin"] == "*"
                 cors = true
               end
+
+              trending = JSON.parse(req.body)
+              trending[0]["videoId"].as_s()
+              api = true
             rescue
               puts "Cant parse API json"
             end
