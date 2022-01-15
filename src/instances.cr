@@ -24,7 +24,7 @@ macro rendered(filename)
   render "src/instances/views/#{{{filename}}}.ecr"
 end
 
-alias Instance = NamedTuple(flag: String?, region: String?, stats: JSON::Any?, type: String, uri: String, monitor: JSON::Any?)
+alias Instance = NamedTuple(flag: String?, region: String?, stats: JSON::Any?, cors: Bool?, api: Bool?, type: String, uri: String, monitor: JSON::Any?)
 
 INSTANCES = {} of String => Instance
 
@@ -75,14 +75,31 @@ spawn do
         client.connect_timeout = 5.seconds
         client.read_timeout = 5.seconds
         begin
-          stats = JSON.parse(client.get("/api/v1/stats").body)
+          req = client.get("/api/v1/stats")
+          stats = JSON.parse(req.body)
+
+          api = false
+          cors = false
+          req = client.get("/api/v1/trending")
+          if req.status_code == 200
+            begin
+              cors = (req.headers["Access-Control-Allow-Origin"] == "*")
+
+              # Try to parse the json and validate the api response
+              trending = JSON.parse(req.body)
+              trending[0]["videoId"].as_s
+              api = true
+            rescue
+              puts "Cant parse API json"
+            end
+          end
         rescue ex
           stats = nil
         end
       end
 
       monitor = monitors.try &.select { |monitor| monitor["name"].try &.as_s == host }[0]?
-      instances[host] = {flag: flag, region: region, stats: stats, type: type, uri: uri.to_s, monitor: monitor || instances[host]?.try &.[:monitor]?}
+      instances[host] = {flag: flag, region: region, stats: stats, cors: cors, api: api, type: type, uri: uri.to_s, monitor: monitor || instances[host]?.try &.[:monitor]?}
     end
 
     INSTANCES.clear
@@ -139,6 +156,8 @@ SORT_PROCS = {
   "name"     => ->(name : String, instance : Instance) { name },
   "signup"   => ->(name : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
   "type"     => ->(name : String, instance : Instance) { instance[:type] },
+  "cors"     => ->(name : String, instance : Instance) { instance[:cors] == nil ? 2 : instance[:cors] ? 0 : 1 },
+  "api"      => ->(name : String, instance : Instance) { instance[:api] == nil ? 2 : instance[:api] ? 0 : 1 },
   "users"    => ->(name : String, instance : Instance) { -(instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0) },
   "version"  => ->(name : String, instance : Instance) { instance[:stats]?.try &.["software"]?.try &.["version"].as_s.try &.split("-", 2)[0].split(".").map { |a| -a.to_i } || [0, 0, 0] },
 }

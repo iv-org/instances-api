@@ -106,6 +106,8 @@
             <th><a href="/?sort_by=<%= sort_by == "health" ? "health-reverse" : "health" %>">
               <div class="tooltip">health<span class="tooltiptext">Uptime / Downtime displayed in percentage</span></div></a>
             </th>
+            <th><a href="/?sort_by=<%= sort_by == "cors" ? "cors-reverse" : "cors" %>">cors</a></th>
+            <th><a href="/?sort_by=<%= sort_by == "api" ? "api-reverse" : "api" %>">api</a></th>
           </tr>
         </thead>
 
@@ -120,6 +122,8 @@
               <td><%= instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? "✔" : "❌" } || "-" %></td>
               <td><%= instance[:flag]? ? "#{instance[:flag]} #{instance[:region]}" : "-" %></td>
               <td><%= instance[:monitor]?.try &.["30dRatio"]["ratio"] || "-" %></td>
+              <td><%= instance[:cors] == nil ? "-" : instance[:cors] ? "✔" : "❌" %></td>
+              <td><%= instance[:api] == nil ? "-" : instance[:api] ? "✔" : "❌" %></td>
             </tr>
           <% end %>
         </tbody>
