@@ -51,7 +51,7 @@ spawn do
       end
     end
     begin
-      body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/iv-org/documentation/master/Invidious-Instances.md")).body
+      body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/iv-org/documentation/master/docs/Invidious-Instances.md")).body
     rescue ex
       body = ""
     end
