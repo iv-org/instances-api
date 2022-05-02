@@ -72,8 +72,8 @@ spawn do
       else
         type = uri.scheme.not_nil!
         client = HTTP::Client.new(uri)
-        client.connect_timeout = 5.seconds
-        client.read_timeout = 5.seconds
+        client.connect_timeout = 10.seconds
+        client.read_timeout = 10.seconds
         begin
           req = client.get("/api/v1/stats")
           stats = JSON.parse(req.body)
