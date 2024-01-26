@@ -142,8 +142,26 @@ get "/instances.json" do |env|
 end
 
 error 404 do |env|
-  env.redirect "/"
-  halt env, status_code: 302, response: ""
+  if env.request.headers["host"]? != "random.invidious.io"
+    next env.redirect "/"
+  end
+
+  type = env.params.query["iv-type"]? || "https"
+  region = env.params.query["iv-region"]?
+  health = (env.params.query["iv-health"]?.try &.to_f || 95.0).clamp(0,100)
+  api_call = env.request.path.starts_with?("/api/")
+
+  instances = INSTANCES.values.select {|v|
+    v[:type] == type &&
+    (!api_call || v[:api]) &&
+    (!region || v[:region] == region) &&
+    (v[:monitor]?.try &.["30dRatio"]["ratio"].as_s.to_f || 0.0) >= health
+  }
+  if instances.empty?
+    next "no suitable instance found (region = #{region || "any"}, health > #{health}%)"
+  end
+  instance = instances.sample
+  next env.redirect "#{instance[:uri]}#{env.request.resource}"
 end
 
 static_headers do |response, filepath, filestat|
