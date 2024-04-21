@@ -32,7 +32,7 @@ spawn do
   loop do
     monitors = [] of JSON::Any
     begin
-      client = HTTP::Client.new(URI.parse("https://updown.io/p/wqufo"))
+      client = HTTP::Client.new(URI.parse("https://updown.io/p/resvf"))
       client.connect_timeout = 10.seconds
       client.read_timeout = 10.seconds
       # Read only key for accessing the uptime checks
