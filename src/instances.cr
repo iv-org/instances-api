@@ -31,25 +31,18 @@ INSTANCES = {} of String => Instance
 spawn do
   loop do
     monitors = [] of JSON::Any
-    page = 1
-    loop do
-      begin
-        client = HTTP::Client.new(URI.parse("https://stats.uptimerobot.com/89VnzSKAn"))
-        client.connect_timeout = 10.seconds
-        client.read_timeout = 10.seconds
-        response = JSON.parse(client.get("/api/getMonitorList/89VnzSKAn?page=#{page}").body)
-
-        monitors += response["psp"]["monitors"].as_a
-        page += 1
-
-        break if response["psp"]["perPage"].as_i * (page - 1) + 1 > response["psp"]["totalMonitors"].as_i
-      rescue ex
-        error_message = response.try &.as?(String).try &.["errorStats"]?
-        error_message ||= ex.message
-        puts "Error pulling monitors: #{error_message}"
-        break
-      end
+    begin
+      client = HTTP::Client.new(URI.parse("https://updown.io/p/wqufo"))
+      client.connect_timeout = 10.seconds
+      client.read_timeout = 10.seconds
+      # Read only key for accessing the uptime checks
+      response = JSON.parse(client.get("/api/checks?api-key=ro-52iHyp6LBqQq7rGp4N7p").body)
+      monitors += response.as_a
+    rescue ex
+      puts "Error pulling monitors: #{ex.message}"
+      break
     end
+
     begin
       body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/iv-org/documentation/master/docs/instances.md")).body
     rescue ex
@@ -98,7 +91,7 @@ spawn do
         end
       end
 
-      monitor = monitors.try &.select { |monitor| monitor["name"].try &.as_s == host }[0]?
+      monitor = monitors.try &.select { |monitor| monitor["alias"].try &.as_s == host }[0]?
       instances[host] = {flag: flag, region: region, stats: stats, cors: cors, api: api, type: type, uri: uri.to_s, monitor: monitor || instances[host]?.try &.[:monitor]?}
     end
 
@@ -151,15 +144,15 @@ static_headers do |response, filepath, filestat|
 end
 
 SORT_PROCS = {
-  "health"   => ->(name : String, instance : Instance) { -(instance[:monitor]?.try &.["30dRatio"]["ratio"].as_s.to_f || 0.0) },
-  "location" => ->(name : String, instance : Instance) { instance[:region]? || "ZZ" },
+  "health"   => ->(alias : String, instance : Instance) { -(instance[:monitor]?.try &.["uptime"].as_s.to_f || 0.0) },
+  "location" => ->(alias : String, instance : Instance) { instance[:region]? || "ZZ" },
   "name"     => ->(name : String, instance : Instance) { name },
-  "signup"   => ->(name : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
-  "type"     => ->(name : String, instance : Instance) { instance[:type] },
-  "cors"     => ->(name : String, instance : Instance) { instance[:cors] == nil ? 2 : instance[:cors] ? 0 : 1 },
-  "api"      => ->(name : String, instance : Instance) { instance[:api] == nil ? 2 : instance[:api] ? 0 : 1 },
-  "users"    => ->(name : String, instance : Instance) { -(instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0) },
-  "version"  => ->(name : String, instance : Instance) { instance[:stats]?.try &.["software"]?.try &.["version"].as_s.try &.split("-", 2)[0].split(".").map { |a| -a.to_i } || [0, 0, 0] },
+  "signup"   => ->(alias : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
+  "type"     => ->(alias : String, instance : Instance) { instance[:type] },
+  "cors"     => ->(alias : String, instance : Instance) { instance[:cors] == nil ? 2 : instance[:cors] ? 0 : 1 },
+  "api"      => ->(alias : String, instance : Instance) { instance[:api] == nil ? 2 : instance[:api] ? 0 : 1 },
+  "users"    => ->(alias : String, instance : Instance) { -(instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0) },
+  "version"  => ->(alias : String, instance : Instance) { instance[:stats]?.try &.["software"]?.try &.["version"].as_s.try &.split("-", 2)[0].split(".").map { |a| -a.to_i } || [0, 0, 0] },
 }
 
 def sort_instances(instances, sort_by)
