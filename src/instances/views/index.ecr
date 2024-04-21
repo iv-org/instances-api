@@ -61,23 +61,13 @@
         padding: 5px 0;
         position: absolute;
         z-index: 1;
-        bottom: 125%;
-        left: 0%;
-        margin-left: -60px;
+        bottom: 0;
+        left: 50%;
         opacity: 0;
         transition: opacity 0.3s;
+        transform: translate(-50%, calc(100% + 5px)) rotate(0deg);
       }
       
-      .tooltip .tooltiptext::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #555 transparent transparent transparent;
-      }
       .tooltip:hover .tooltiptext {
         visibility: visible;
         opacity: 1;
@@ -99,15 +89,18 @@
           <tr>
             <th><a href="/?sort_by=<%= sort_by == "name" ? "name-reverse" : "name" %>">name</a></th>
             <th><a href="/?sort_by=<%= sort_by == "version" ? "version-reverse" : "version" %>">version</a></th>
-            <th><a href="/?sort_by=<%= sort_by == "type" ? "type-reverse" : "type" %>">type</a></th>
             <th><a href="/?sort_by=<%= sort_by == "users" ? "users-reverse" : "users" %>">users</a></th>
             <th><a href="/?sort_by=<%= sort_by == "signup" ? "signup-reverse" : "signup" %>">signup</a></th>
-            <th><a href="/?sort_by=<%= sort_by == "location" ? "location-reverse" : "location" %>">location</a></th>
             <th><a href="/?sort_by=<%= sort_by == "health" ? "health-reverse" : "health" %>">
               <div class="tooltip">health<span class="tooltiptext">Uptime / Downtime displayed in percentage</span></div></a>
             </th>
-            <th><a href="/?sort_by=<%= sort_by == "cors" ? "cors-reverse" : "cors" %>">cors</a></th>
+            <th><a href="/?sort_by=<%= sort_by == "playback" ? "playback-reverse" : "playback" %>">
+              <div class="tooltip">playback<span class="tooltiptext">Proxy playback success displayed in percentage,<br>0 means local proxy and DASH doesn't work.<br>"-" doesn't mean not working.</span></div>
+            </th>
+            <th><a href="/?sort_by=<%= sort_by == "location" ? "location-reverse" : "location" %>">location</a></th>
+            <th><a href="/?sort_by=<%= sort_by == "type" ? "type-reverse" : "type" %>">type</a></th>          
             <th><a href="/?sort_by=<%= sort_by == "api" ? "api-reverse" : "api" %>">api</a></th>
+            <th><a href="/?sort_by=<%= sort_by == "cors" ? "cors-reverse" : "cors" %>">cors</a></th>
           </tr>
         </thead>
 
@@ -117,13 +110,14 @@
             <tr<% if index % 2 == 1 %> class="pure-table-odd" <% end %>>
               <td><a href="<%= instance[:uri] %>"><%= name.size > 24 ? "#{name[0, 12]}...#{name[-9, 9]}" : name %></a></td>
               <td><%= instance[:stats]?.try &.["software"]?.try &.["version"] || "-" %></td>
-              <td><%= instance[:type] %></td>
               <td><%= instance[:stats]?.try &.["usage"]?.try &.["users"]["total"] || "-" %></td>
               <td><%= instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? "✔" : "❌" } || "-" %></td>
-              <td><%= instance[:flag]? ? "#{instance[:flag]} #{instance[:region]}" : "-" %></td>
               <td><%= instance[:monitor]?.try &.["30dRatio"]["ratio"] || "-" %></td>
-              <td><%= instance[:cors] == nil ? "-" : instance[:cors] ? "✔" : "❌" %></td>
+              <td><%= instance[:stats]?.try &.["playback"]?.try &.["ratio"]?.try { |ratio| ratio.as_f.to_i * 100 } || "-" %></td>
+              <td><%= instance[:flag]? ? "#{instance[:flag]} #{instance[:region]}" : "-" %></td>
+              <td><%= instance[:type] %></td>
               <td><%= instance[:api] == nil ? "-" : instance[:api] ? "✔" : "❌" %></td>
+              <td><%= instance[:cors] == nil ? "-" : instance[:cors] ? "✔" : "❌" %></td>
             </tr>
           <% end %>
         </tbody>
@@ -132,11 +126,13 @@
 
     <div class="footer">
       <p>
+        Proxy playback success displayed in percentage, 0 means local proxy and DASH doesn't work. But "-" doesn't mean not working.
+        <br>
         Health is Uptime / Downtime displayed in percentage.
         <br>
         Released under the AGPLv3. Source available <a href="https://github.com/iv-org/instances.invidio.us">here</a>.
         <br>
-        This site is built with ❤️ using <a href="https://purecss.io/">Pure v1.0.1</a>.
+        This site is built with ❤️ using <a href="https://purecss.io/">Pure v3.0.0</a>.
       </p>
     </div>
   </body>

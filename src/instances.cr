@@ -160,6 +160,7 @@ SORT_PROCS = {
   "api"      => ->(name : String, instance : Instance) { instance[:api] == nil ? 2 : instance[:api] ? 0 : 1 },
   "users"    => ->(name : String, instance : Instance) { -(instance[:stats]?.try &.["usage"]?.try &.["users"]["total"].as_i || 0) },
   "version"  => ->(name : String, instance : Instance) { instance[:stats]?.try &.["software"]?.try &.["version"].as_s.try &.split("-", 2)[0].split(".").map { |a| -a.to_i } || [0, 0, 0] },
+  "playback" => ->(name : String, instance : Instance) { -(instance[:stats]?.try &.["playback"]?.try &.["ratio"]?.try { |ratio| ratio.as_f } || 0.0) },
 }
 
 def sort_instances(instances, sort_by)
