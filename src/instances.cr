@@ -39,8 +39,7 @@ spawn do
       response = JSON.parse(client.get("/api/checks?api-key=ro-52iHyp6LBqQq7rGp4N7p").body)
       monitors += response.as_a
     rescue ex
-      error_message ||= ex.message
-      puts "Error pulling monitors: #{error_message}"
+      puts "Error pulling monitors: #{ex.message}"
       break
     end
 
