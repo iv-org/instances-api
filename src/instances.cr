@@ -31,25 +31,19 @@ INSTANCES = {} of String => Instance
 spawn do
   loop do
     monitors = [] of JSON::Any
-    #page = 1
-    loop do
-      begin
-        client = HTTP::Client.new(URI.parse("https://updown.io/p/wqufo"))
-        client.connect_timeout = 10.seconds
-        client.read_timeout = 10.seconds
-        response = JSON.parse(client.get("/api/checks?api-key=ro-52iHyp6LBqQq7rGp4N7p").body)
-
-  #      monitors += response["psp"]["monitors"].as_a
-  #      page += 1
-
-  #      break if response["psp"]["perPage"].as_i * (page - 1) + 1 > response["psp"]["totalMonitors"].as_i
-      rescue ex
-        error_message = response.try &.as?(String).try &.["errorStats"]?
-        error_message ||= ex.message
-        puts "Error pulling monitors: #{error_message}"
-        break
-      end
+    begin
+      client = HTTP::Client.new(URI.parse("https://updown.io/p/wqufo"))
+      client.connect_timeout = 10.seconds
+      client.read_timeout = 10.seconds
+      response = JSON.parse(client.get("/api/checks?api-key=ro-52iHyp6LBqQq7rGp4N7p").body)
+      monitors += response.as_a
+    rescue ex
+      error_message = response.try &.as?(String).try &.["errorStats"]?
+      error_message ||= ex.message
+      puts "Error pulling monitors: #{error_message}"
+      break
     end
+
     begin
       body = HTTP::Client.get(URI.parse("https://raw.githubusercontent.com/iv-org/documentation/master/docs/instances.md")).body
     rescue ex
@@ -151,7 +145,7 @@ static_headers do |response, filepath, filestat|
 end
 
 SORT_PROCS = {
-  "health"   => ->(alias : String, instance : Instance) { -(instance[:monitor]?.try &.["30dRatio"]["ratio"].as_s.to_f || 0.0) },
+  "health"   => ->(alias : String, instance : Instance) { -(instance[:monitor]?.try &.["uptime"].as_s.to_f || 0.0) },
   "location" => ->(alias : String, instance : Instance) { instance[:region]? || "ZZ" },
   "name"     => ->(name : String, instance : Instance) { name },
   "signup"   => ->(alias : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
