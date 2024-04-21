@@ -38,7 +38,6 @@ spawn do
       response = JSON.parse(client.get("/api/checks?api-key=ro-52iHyp6LBqQq7rGp4N7p").body)
       monitors += response.as_a
     rescue ex
-      error_message = response.try &.as?(String).try &.["errorStats"]?
       error_message ||= ex.message
       puts "Error pulling monitors: #{error_message}"
       break
