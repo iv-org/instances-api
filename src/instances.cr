@@ -35,6 +35,7 @@ spawn do
       client = HTTP::Client.new(URI.parse("https://updown.io/p/wqufo"))
       client.connect_timeout = 10.seconds
       client.read_timeout = 10.seconds
+      # Read only key for accessing the uptime checks
       response = JSON.parse(client.get("/api/checks?api-key=ro-52iHyp6LBqQq7rGp4N7p").body)
       monitors += response.as_a
     rescue ex
