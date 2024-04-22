@@ -144,7 +144,7 @@ static_headers do |response, filepath, filestat|
 end
 
 SORT_PROCS = {
-  "health"   => ->(alias : String, instance : Instance) { -(instance[:monitor]?.try &.["uptime"].as_s.to_f || 0.0) },
+  "health"   => ->(alias : String, instance : Instance) { -(instance[:monitor]?.try &.["uptime"].as_f || 0.0) },
   "location" => ->(alias : String, instance : Instance) { instance[:region]? || "ZZ" },
   "name"     => ->(name : String, instance : Instance) { name },
   "signup"   => ->(alias : String, instance : Instance) { instance[:stats]?.try &.["openRegistrations"]?.try { |bool| bool.as_bool ? 0 : 1 } || 2 },
