@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/iv-org/instances-api/workflows/api.invidious.io%20CI/badge.svg)](https://github.com/iv-org/instances-api/actions)
 
-Status page for [Invidious](https://github.com/iv-org/invidious) instances, sourced from [the documentation](https://github.com/iv-org/documentation/blob/master/Invidious-Instances.md).
+Status page for [Invidious](https://github.com/iv-org/invidious) instances, sourced from [the documentation](https://docs.invidious.io/instances/).
 
 ## Installation
 
