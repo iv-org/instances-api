@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Build Docker
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Test Docker
         run: curl -Isf http://localhost:3000
