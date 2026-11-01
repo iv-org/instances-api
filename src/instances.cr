@@ -139,8 +139,8 @@ error 404 do |env|
   halt env, status_code: 302, response: ""
 end
 
-static_headers do |response, filepath, filestat|
-  response.headers.add("Cache-Control", "max-age=86400")
+static_headers do |env|
+  env.response.headers.add("Cache-Control", "max-age=86400")
 end
 
 SORT_PROCS = {

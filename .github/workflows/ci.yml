@@ -13,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - name: Install Crystal
-        uses: crystal-lang/install-crystal@v1.8.1
+        uses: crystal-lang/install-crystal@v1.9.4
         with:
-          crystal: 1.10.1
+          crystal: 1.22.2
 
       - name: Cache Shards
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: ./lib
           key: shards-${{ hashFiles('shard.lock') }}
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - name: Build Docker
         run: docker-compose up -d

@@ -1,5 +1,5 @@
 name: instances
-version: 0.2.0
+version: 0.3.0
 
 authors:
   - Omar Roth <omarroth@protonmail.com>
@@ -12,7 +12,7 @@ targets:
 dependencies:
   kemal:
     github: kemalcr/kemal
-    version: ~> 1.4.0
+    version: ~> 1.15.0
 
 crystal: 1.10.1
 
