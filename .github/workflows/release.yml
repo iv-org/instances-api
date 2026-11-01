@@ -73,7 +73,7 @@ jobs:
         uses: int128/docker-manifest-create-action@v2
         with:
           push: true
-          tags: quay.io/invidious/invidious:latest
+          tags: quay.io/invidious/instances:latest
           sources: |
-            quay.io/invidious/invidious:instances
-            quay.io/invidious/invidious:instances-arm64
+            quay.io/invidious/instances:latest
+            quay.io/invidious/instances:latest-arm64
