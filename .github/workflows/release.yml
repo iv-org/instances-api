@@ -45,7 +45,7 @@ jobs:
             suffix=${{ matrix.tag_suffix }}
           tags: |
             type=sha,format=short,prefix={{date 'YYYY.MM.DD'}}-,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
-            type=raw,value=master,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
 
       - name: Build and push Docker ${{ matrix.name }} image for Push Event
         uses: docker/build-push-action@v7
