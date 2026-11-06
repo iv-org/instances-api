@@ -1,11 +1,11 @@
-FROM crystallang/crystal:1.10.1-alpine AS builder
+FROM crystallang/crystal:1.22.2-alpine AS builder
 WORKDIR /app
 COPY ./shard.yml ./shard.yml
 RUN shards install
 COPY ./src/ ./src/
 RUN crystal build ./src/instances.cr --release
 
-FROM alpine:3.18
+FROM alpine:3.24
 RUN apk add --no-cache gc pcre2 libgcc
 WORKDIR /app
 RUN addgroup -g 1000 -S invidious && \
